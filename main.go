@@ -34,6 +34,7 @@ type Invoice struct {
 	Rates      []float64 `json:"rates" yaml:"rates"`
 
 	Tax      float64 `json:"tax" yaml:"tax"`
+	TaxLabel string  `json:"taxLabel" yaml:"taxLabel"`
 	Discount float64 `json:"discount" yaml:"discount"`
 	Currency string  `json:"currency" yaml:"currency"`
 
@@ -52,6 +53,7 @@ func DefaultInvoice() Invoice {
 		Date:       time.Now().Format("Jan 02, 2006"),
 		Due:        time.Now().AddDate(0, 0, 14).Format("Jan 02, 2006"),
 		Tax:        0,
+		TaxLabel:   "",
 		Discount:   0,
 		Currency:   "USD",
 	}
@@ -82,6 +84,7 @@ func init() {
 	generateCmd.Flags().StringVar(&file.Due, "due", defaultInvoice.Due, "Payment due date")
 
 	generateCmd.Flags().Float64Var(&file.Tax, "tax", defaultInvoice.Tax, "Tax")
+	generateCmd.Flags().StringVar(&file.TaxLabel, "tax-label", defaultInvoice.TaxLabel, "Tax Label")
 	generateCmd.Flags().Float64VarP(&file.Discount, "discount", "d", defaultInvoice.Discount, "Discount")
 	generateCmd.Flags().StringVarP(&file.Currency, "currency", "c", defaultInvoice.Currency, "Currency")
 
@@ -148,7 +151,7 @@ var generateCmd = &cobra.Command{
 		if file.Note != "" {
 			writeNotes(&pdf, file.Note)
 		}
-		writeTotals(&pdf, subtotal, subtotal*file.Tax, subtotal*file.Discount)
+		writeTotals(&pdf, subtotal, subtotal*file.Tax, subtotal*file.Discount, file.TaxLabel)
 		if file.Due != "" {
 			writeDueDate(&pdf, file.Due)
 		}

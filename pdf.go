@@ -166,12 +166,16 @@ func writeRow(pdf *gopdf.GoPdf, item string, quantity int, rate float64) {
 	pdf.Br(24)
 }
 
-func writeTotals(pdf *gopdf.GoPdf, subtotal float64, tax float64, discount float64) {
+func writeTotals(pdf *gopdf.GoPdf, subtotal float64, tax float64, discount float64, customTaxLabel string) {
 	pdf.SetY(600)
 
 	writeTotal(pdf, subtotalLabel, subtotal)
 	if tax > 0 {
-		writeTotal(pdf, taxLabel, tax)
+		label := taxLabel
+		if customTaxLabel != "" {
+			label = customTaxLabel
+		}
+		writeTotal(pdf, label, tax)
 	}
 	if discount > 0 {
 		writeTotal(pdf, discountLabel, discount)
